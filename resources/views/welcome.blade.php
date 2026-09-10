@@ -11,7 +11,7 @@
     <input type="text" name="name" placeholder="Name">
 
     <label>Enter your ID number: </label>
-    <input type="text" name="idNum" placeholder="2020-00-000">
+    <input type="text" name="id_number" placeholder="2020-00-000">
 
     <button type="submit">Submit</button>
 
