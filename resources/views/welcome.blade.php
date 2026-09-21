@@ -1,7 +1,14 @@
+
+
 <x-layout>
+    <x-slot name="adminlink">
+        <div>
+            <a href="{{ route('admin') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Admin</a>
+        </div>
+    </x-slot>
 
 <div>
-<a href="{{ route('admin') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Admin</a>
+
 
 </div>
 

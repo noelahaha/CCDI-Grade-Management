@@ -4,10 +4,16 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ config('CCDIGradeManager.name', 'Grade Manager') }}</title>
+        <title>Grade Manager</title>
+    </head>
 
-        {{$slot}}
+    <body>
 
-     
+        <header>
+            {{ $adminlink }}
+        </header>
+
+        {{ $slot }}
+
     </body>
 </html>
