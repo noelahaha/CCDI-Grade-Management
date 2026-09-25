@@ -10,6 +10,16 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+
+        then: function () {
+        require base_path('routes/LoginInfo.php');
+        require base_path('routes/admin-login.php');
+        require base_path('routes/admin.php');
+        require base_path('routes/dashboard.php');
+        require base_path('routes/gradeUpload.php');
+        require base_path('routes/newStudent.php');
+        require base_path('routes/studentInfo.php');
+    },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         //

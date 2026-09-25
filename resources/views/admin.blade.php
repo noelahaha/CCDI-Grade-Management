@@ -48,6 +48,9 @@
         <label>Enter ID number: </label>
         <input type="text" name="id_number" placeholder="2020-00-000">
 
+        <label>Enter Course:</label>
+        <input type="text" name="course" placeholder="Course">
+
         <button type="submit">Submit</button>
     </form>
     

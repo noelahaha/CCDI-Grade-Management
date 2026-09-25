@@ -24,6 +24,7 @@ class StudentController extends Controller
 {
     $student = Student::where('name', $request->input('name'))
         ->where('id_number', $request->input('id_number'))
+        ->where('course', $request->input('course'))
         ->first();
 
     if ($student) {
@@ -33,6 +34,7 @@ class StudentController extends Controller
     Student::create([
         'name' => $request->input('name'),
         'id_number' => $request->input('id_number'),
+        'course' => $request->input('course'),
     ]);
 
     return back()->with('success', 'Student added successfully.');
