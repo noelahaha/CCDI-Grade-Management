@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\GradeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GradeController;
 
-Route::post('/grade-upload', [GradeController::class, 'store'])
-    ->name('grade-upload.store');
+Route::post('/grades/upload', [GradeController::class, 'upload'])
+    ->name('grades.upload');

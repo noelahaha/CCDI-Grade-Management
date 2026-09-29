@@ -8,6 +8,15 @@
     </button>
     </form>
 
+{{--     
+   <form method="POST" action="{{ route('digital-request.store') }}">
+    @csrf
+
+    <button type="submit">
+        Request Digital Copy of Grades
+    </button>
+    </form>
+ --}}
 
 
 

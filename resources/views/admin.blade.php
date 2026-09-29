@@ -33,6 +33,38 @@
         <button type="submit">Submit</button>
     </form>
     
+    <label>File Entry</label>
+
+
+    <form method="POST"
+          action="{{ route('grades.upload') }}"
+          enctype="multipart/form-data">
+
+        @csrf
+
+        <label>Select Word File:</label>
+
+        <input
+            type="file"
+            name="grade_file"
+            accept=".docx"
+            required
+        >
+
+        <button type="submit">
+            Upload Grades
+        </button>
+
+    </form>
+
+    @if(session('success'))
+        <p>{{ session('success') }}</p>
+    @endif
+
+    @if(session('error'))
+        <p>{{ session('error') }}</p>
+    @endif
+
 </div>
 
 <div id="students" style="display: none;">
@@ -62,6 +94,34 @@
     <p>{{ session('success') }}</p>
     @endif
 
+    <br>
+
+<label>Upload Word File</label>
+
+<form method="POST"
+      action="{{ route('students.upload') }}"
+      enctype="multipart/form-data">
+
+    @csrf
+
+    <input
+        type="file"
+        name="student_file"
+        accept=".docx"
+        required
+    >
+
+    <button type="submit">Upload Students</button>
+</form>
+
+
+    @if (session('error'))
+    <p>{{ session('error') }}</p>
+    @endif
+
+    @if (session('success'))
+    <p>{{ session('success') }}</p>
+    @endif
 
 </div>
 

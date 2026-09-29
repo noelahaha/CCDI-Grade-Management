@@ -5,3 +5,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/student-info', [StudentController::class, 'store'])
     ->name('student-info.store');
+
+

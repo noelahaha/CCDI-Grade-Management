@@ -10,3 +10,7 @@ Route::get('/', function () {
 
 Route::post('/grade-request', [RequestController::class, 'store'])
     ->name('grade-request.store');
+
+
+// Route::post('/digital-request', [RequestController::class, 'digitalStore'])
+//     ->name('digital-request.store');
