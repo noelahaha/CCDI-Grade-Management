@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Admin;
+use App\Models\Requests;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
 
@@ -11,17 +12,19 @@ class AdminController extends Controller
 {
     public function login(Request $request)
     {
-        $name = strtolower($request->input('name'));
+        // Keep the name exactly as typed
+        $name = $request->input('name');
 
         // Unique key for this admin + IP address
         $key = 'admin-login:' . $name . ':' . $request->ip();
 
         // Check if currently locked
         $lockedUntil = Cache::get($key . ':locked');
-
         if ($lockedUntil) {
 
-            $seconds = now()->diffInSeconds($lockedUntil);
+            $seconds = now()->diffInSeconds(
+                \Carbon\Carbon::parse($lockedUntil)
+            );
 
             if ($seconds > 0) {
                 return back()->with(
@@ -30,11 +33,11 @@ class AdminController extends Controller
                 );
             }
 
-            // Lockout expired
             Cache::forget($key . ':locked');
         }
 
-        $admin = Admin::where('name', $name)->first();
+        // Case-sensitive name comparison
+        $admin = Admin::whereRaw('BINARY name = ?', [$name])->first();
 
         // Wrong username or password
         if (!$admin || !Hash::check($request->input('password'), $admin->password)) {
@@ -56,7 +59,7 @@ class AdminController extends Controller
 
                 Cache::put(
                     $key . ':locked',
-                    now()->addMinutes(15),
+                    now()->addMinutes(15)->toDateTimeString(),
                     now()->addMinutes(15)
                 );
 
@@ -71,7 +74,7 @@ class AdminController extends Controller
 
                 Cache::put(
                     $key . ':locked',
-                    now()->addMinutes(2),
+                    now()->addMinutes(2)->toDateTimeString(),
                     now()->addMinutes(2)
                 );
 
@@ -86,7 +89,7 @@ class AdminController extends Controller
 
                 Cache::put(
                     $key . ':locked',
-                    now()->addSeconds(30),
+                    now()->addSeconds(30)->toDateTimeString(),
                     now()->addSeconds(30)
                 );
 
@@ -108,4 +111,12 @@ class AdminController extends Controller
 
         return redirect('/admin');
     }
+
+    public function admin()
+{
+    $requests = Requests::latest()->get();
+
+    return view('admin', compact('requests'));
+}
+
 }
