@@ -11,5 +11,8 @@ class Requests extends Model
     protected $fillable = [
         'name',
         'id_number',
+        'course',
+        'seen',
+        'printed',
     ];
 }
