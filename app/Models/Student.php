@@ -12,7 +12,5 @@ class Student extends Model
         'name',
         'id_number',
         'course',
-        'year',
-        'semester',
     ];
 }
