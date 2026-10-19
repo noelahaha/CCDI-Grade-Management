@@ -8,20 +8,1375 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
+
+/* ========================================
+   THEME COLORS
+======================================== */
+
+:root {
+    --bg-color: #f5f7fb;
+    --text-color: #222222;
+    --muted-text: #6b7280;
+
+    --header-bg: #ffffff;
+    --header-border: #e5e7eb;
+
+    --card-bg: #ffffff;
+
+    --button-bg: #f1f3f5;
+    --button-hover: #e2e5e9;
+
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    --accent: #2563eb;
 }
 
-header img {
-    width: 70px;
-    height: 70px;
+
+/* ========================================
+   DARK MODE COLORS
+======================================== */
+
+body.dark-mode {
+    --bg-color: #101114;
+    --text-color: #f5f5f5;
+    --muted-text: #a1a1aa;
+
+    --header-bg: #18191d;
+    --header-border: #2b2d33;
+
+    --card-bg: #1b1d22;
+
+    --button-bg: #292c32;
+    --button-hover: #353941;
+
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+
+    --accent: #60a5fa;
+}
+
+
+/* ========================================
+   BODY
+======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+
+    background-color: var(--bg-color);
+    color: var(--text-color);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    transition:
+        background-color 0.4s ease,
+        color 0.4s ease;
+}
+
+
+/* ========================================
+   HEADER
+======================================== */
+
+header {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    padding: 14px 28px;
+
+    background-color: var(--header-bg);
+
+    border-bottom: 1px solid var(--header-border);
+
+    box-shadow: var(--shadow);
+
+    transition:
+        background-color 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
+
+    position: relative;
+    z-index: 100;
+}
+
+
+/* ========================================
+   LOGO
+======================================== */
+
+.logo-container {
+    width: 68px;
+    height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 16px;
+
+    background-color: var(--button-bg);
+
+    transition:
+        background-color 0.4s ease,
+        transform 0.3s ease;
+}
+
+.logo-container:hover {
+    transform: scale(1.04);
+}
+
+.logo-container img {
+    width: 55px;
+    height: 55px;
+
     object-fit: contain;
 }
 
-.header-text {
-    font-size: 20px;
-    font-weight: bold;
+
+/* ========================================
+   HEADER TEXT
+======================================== */
+
+.header-content {
+    margin-left: 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    line-height: 1.2;
 }
+
+.school-name {
+    font-size: 19px;
+    font-weight: 700;
+
+    color: var(--text-color);
+
+    letter-spacing: 0.2px;
+}
+
+.system-name {
+    margin-top: 5px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: var(--accent);
+
+    letter-spacing: 1px;
+}
+
+
+/* ========================================
+   THEME BUTTON
+======================================== */
+
+.theme-button {
+    margin-left: auto;
+
+    width: 48px;
+    height: 48px;
+
+    border: 1px solid var(--header-border);
+
+    border-radius: 50%;
+
+    background-color: var(--button-bg);
+    color: var(--text-color);
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 23px;
+
+    overflow: hidden;
+
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.theme-button:hover {
+    background-color: var(--button-hover);
+
+    transform: scale(1.08) rotate(8deg);
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.theme-button:active {
+    transform: scale(0.90);
+}
+
+
+/* ========================================
+   SUN / MOON ANIMATION
+======================================== */
+
+#themeIcon {
+    display: inline-block;
+
+    transition:
+        transform 0.5s ease,
+        opacity 0.3s ease;
+}
+
+.rotate-icon {
+    transform: rotate(360deg) scale(1.25);
+}
+
+
+/* ========================================
+   MAIN CONTENT
+======================================== */
+
+main {
+    width: 100%;
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding: 30px;
+}
+
+
+/* ========================================
+   COMMON CARD STYLE
+
+   Use class="card" in other Blade pages.
+======================================== */
+
+.card {
+    background-color: var(--card-bg);
+
+    border: 1px solid var(--header-border);
+
+    border-radius: 16px;
+
+    padding: 24px;
+
+    box-shadow: var(--shadow);
+
+    transition:
+        background-color 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+
+/* ========================================
+   BUTTON STYLE
+
+   Use class="ui-button" for buttons.
+======================================== */
+
+.ui-button {
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 10px 18px;
+
+    background-color: var(--accent);
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.ui-button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 600px) {
+
+    header {
+        padding: 12px 16px;
+    }
+
+    .logo-container {
+        width: 55px;
+        height: 55px;
+    }
+
+    .logo-container img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .header-content {
+        margin-left: 12px;
+    }
+
+    .school-name {
+        font-size: 15px;
+    }
+
+    .system-name {
+        font-size: 10px;
+        letter-spacing: 0.6px;
+    }
+
+    .theme-button {
+        width: 42px;
+        height: 42px;
+
+        font-size: 20px;
+    }
+
+    main {
+        padding: 18px;
+    }
+}
+
+/* ========================================
+   LOGIN PAGE
+======================================== */
+
+.login-wrapper {
+    min-height: calc(100vh - 110px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+}
+
+
+/* ========================================
+   LOGIN CARD
+======================================== */
+
+.login-card {
+    width: 100%;
+    max-width: 430px;
+    padding: 40px 38px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--header-border);
+    border-radius: 20px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.10);
+    text-align: center;
+    animation: loginAppear 0.5s ease;
+}
+
+@keyframes loginAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ========================================
+   LOGO
+======================================== */
+
+.login-logo {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--button-bg);
+    border-radius: 22px;
+    transition: background-color 0.4s ease, transform 0.3s ease;
+}
+
+.login-logo:hover {
+    transform: scale(1.05);
+}
+
+.login-logo img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+}
+
+
+/* ========================================
+   LOGIN TITLE
+======================================== */
+
+.login-title {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.login-subtitle {
+    margin: 8px 0 30px;
+    font-size: 14px;
+    color: var(--muted-text);
+}
+
+
+/* ========================================
+   FORM
+======================================== */
+
+.login-form {
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+
+/* ========================================
+   INPUT
+======================================== */
+
+.input-wrapper {
+    position: relative;
+}
+
+.login-input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--header-border);
+    border-radius: 10px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.4s ease;
+}
+
+.login-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.login-input::placeholder {
+    color: var(--muted-text);
+}
+
+
+/* ========================================
+   PASSWORD INPUT
+======================================== */
+
+.password-input {
+    padding-right: 48px;
+}
+
+.show-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    color: var(--muted-text);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.show-password:hover {
+    color: var(--accent);
+    transform: translateY(-50%) scale(1.1);
+}
+
+
+/* ========================================
+   LOGIN BUTTON
+======================================== */
+
+.login-button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--accent);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-button:hover {
+    transform: translateY(-2px);
+    opacity: 0.92;
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.25);
+}
+
+.login-button:active {
+    transform: translateY(0);
+}
+
+
+/* ========================================
+   ERROR MESSAGE
+======================================== */
+
+.login-error {
+    margin-top: 20px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    font-size: 13px;
+    text-align: center;
+    animation: errorAppear 0.3s ease;
+}
+
+@keyframes errorAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ========================================
+   DARK MODE ERROR
+======================================== */
+
+body.dark-mode .login-error {
+    background-color: #3b1d20;
+    color: #fca5a5;
+    border-color: #64262b;
+}
+
+
+/* ========================================
+   FOOTER TEXT
+======================================== */
+
+.login-footer {
+    margin-top: 25px;
+    font-size: 12px;
+    color: var(--muted-text);
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 500px) {
+    .login-wrapper {
+        padding: 20px 15px;
+    }
+
+    .login-card {
+        padding: 30px 22px;
+    }
+
+    .login-title {
+        font-size: 23px;
+    }
+}
+
+/* ========================================
+   DASHBOARD
+======================================== */
+
+.dashboard {
+    width: 100%;
+}
+
+
+/* ========================================
+   PAGE TITLE
+======================================== */
+
+.page-heading {
+    margin-bottom: 25px;
+}
+
+.page-heading h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.page-heading p {
+    margin: 7px 0 0;
+    color: var(--muted-text);
+    font-size: 14px;
+}
+
+
+/* ========================================
+   TAB NAVIGATION
+======================================== */
+
+.tab-navigation {
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+    margin-bottom: 25px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--header-border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    width: fit-content;
+}
+
+.tab-button {
+    border: none;
+    padding: 11px 22px;
+    border-radius: 10px;
+    background-color: transparent;
+    color: var(--muted-text);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.tab-button:hover {
+    background-color: var(--button-bg);
+    color: var(--text-color);
+}
+
+.tab-button.active {
+    background-color: var(--accent);
+    color: white;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.20);
+}
+
+
+/* ========================================
+   TAB CONTENT
+======================================== */
+
+.tab-content {
+    animation: tabAppear 0.3s ease;
+}
+
+@keyframes tabAppear {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ========================================
+   SECTION CARD
+======================================== */
+
+.dashboard-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--header-border);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.section-description {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: var(--muted-text);
+}
+
+
+/* ========================================
+   REQUEST TABLE
+======================================== */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--header-border);
+}
+
+.request-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+.request-table th {
+    padding: 14px 16px;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.request-table td {
+    padding: 15px 16px;
+    border-top: 1px solid var(--header-border);
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.request-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.request-table tbody tr:hover {
+    background-color: var(--button-bg);
+}
+
+
+/* ========================================
+   COURSE BADGE
+======================================== */
+
+.course-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background-color: var(--button-bg);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* ========================================
+   CHECKBOX
+======================================== */
+
+.checkbox-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-checkbox {
+    width: 19px;
+    height: 19px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+
+/* ========================================
+   EMPTY TABLE
+======================================== */
+
+.empty-message {
+    text-align: center !important;
+    padding: 40px !important;
+    color: var(--muted-text) !important;
+}
+
+
+/* ========================================
+   FORM GRID
+======================================== */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+
+/* ========================================
+   INPUTS
+======================================== */
+
+.dashboard-input {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid var(--header-border);
+    border-radius: 9px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.4s ease;
+}
+
+.dashboard-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.dashboard-input::placeholder {
+    color: var(--muted-text);
+}
+
+
+/* ========================================
+   ACTION BUTTON
+======================================== */
+
+.primary-button {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 9px;
+    background-color: var(--accent);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    opacity: 0.92;
+    box-shadow: 0 5px 12px rgba(37, 99, 235, 0.20);
+}
+
+
+/* ========================================
+   UPLOAD CARD
+======================================== */
+
+.upload-section {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid var(--header-border);
+}
+
+.upload-title {
+    margin: 0 0 5px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.upload-description {
+    margin: 0 0 15px;
+    font-size: 13px;
+    color: var(--muted-text);
+}
+
+.file-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.file-input {
+    padding: 10px;
+    border: 1px dashed var(--header-border);
+    border-radius: 9px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 13px;
+    cursor: pointer;
+    flex: 1;
+}
+
+
+/* ========================================
+   ALERTS
+======================================== */
+
+.alert {
+    margin-top: 20px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.success-alert {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.error-alert {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+body.dark-mode .success-alert {
+    background-color: #16351f;
+    color: #86efac;
+    border-color: #245c34;
+}
+
+body.dark-mode .error-alert {
+    background-color: #3b1d20;
+    color: #fca5a5;
+    border-color: #64262b;
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+    .tab-navigation {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .tab-button {
+        white-space: nowrap;
+        flex: 1;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full-width {
+        grid-column: auto;
+    }
+
+    .dashboard-card {
+        padding: 18px;
+    }
+
+    .section-header {
+        align-items: flex-start;
+    }
+}
+
+/* ========================================
+   GRADE REQUEST PAGE
+======================================== */
+
+.request-page {
+    min-height: calc(100vh - 110px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+}
+
+
+/* ========================================
+   REQUEST CARD
+======================================== */
+
+.request-card {
+    width: 100%;
+    max-width: 520px;
+    padding: 40px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--header-border);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    animation: requestAppear 0.5s ease;
+}
+
+@keyframes requestAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ========================================
+   ICON
+======================================== */
+
+.request-icon {
+    width: 85px;
+    height: 85px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+    background-color: var(--button-bg);
+    font-size: 42px;
+    transition: background-color 0.4s ease, transform 0.3s ease;
+}
+
+.request-icon:hover {
+    transform: scale(1.06) rotate(-3deg);
+}
+
+
+/* ========================================
+   TITLE
+======================================== */
+
+.request-title {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.request-description {
+    margin: 10px auto 28px;
+    max-width: 400px;
+    color: var(--muted-text);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* ========================================
+   REQUEST BUTTON
+======================================== */
+
+.request-button {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--accent);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.request-button:hover {
+    transform: translateY(-2px);
+    opacity: 0.92;
+    box-shadow: 0 7px 16px rgba(37, 99, 235, 0.25);
+}
+
+.request-button:active {
+    transform: translateY(0);
+}
+
+
+/* ========================================
+   INFORMATION
+======================================== */
+
+.request-info {
+    margin-top: 22px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    background-color: var(--button-bg);
+    color: var(--muted-text);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 500px) {
+    .request-page {
+        padding: 20px 15px;
+    }
+
+    .request-card {
+        padding: 30px 22px;
+    }
+
+    .request-title {
+        font-size: 23px;
+    }
+}
+
+/* ========================================
+   STUDENT INFORMATION PAGE
+======================================== */
+
+.student-page {
+    min-height: calc(100vh - 110px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+}
+
+
+/* ========================================
+   STUDENT CARD
+======================================== */
+
+.student-card {
+    width: 100%;
+    max-width: 480px;
+    padding: 40px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--header-border);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    animation: studentAppear 0.5s ease;
+}
+
+@keyframes studentAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ========================================
+   ICON
+======================================== */
+
+.student-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+    background-color: var(--button-bg);
+    font-size: 40px;
+    transition: background-color 0.4s ease, transform 0.3s ease;
+}
+
+.student-icon:hover {
+    transform: scale(1.06);
+}
+
+
+/* ========================================
+   TITLE
+======================================== */
+
+.student-title {
+    margin: 0;
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.student-subtitle {
+    margin: 8px auto 28px;
+    max-width: 360px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted-text);
+}
+
+
+/* ========================================
+   FORM
+======================================== */
+
+.student-form {
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+
+/* ========================================
+   INPUT
+======================================== */
+
+.student-input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--header-border);
+    border-radius: 10px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.4s ease;
+}
+
+.student-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.student-input::placeholder {
+    color: var(--muted-text);
+}
+
+
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
+
+.student-submit {
+    width: 100%;
+    padding: 14px;
+    margin-top: 3px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--accent);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.student-submit:hover {
+    transform: translateY(-2px);
+    opacity: 0.92;
+    box-shadow: 0 7px 16px rgba(37, 99, 235, 0.25);
+}
+
+.student-submit:active {
+    transform: translateY(0);
+}
+
+
+/* ========================================
+   ADMIN LINK
+======================================== */
+
+.admin-link-container {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--header-border);
+    text-align: center;
+}
+
+.admin-link {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.admin-link:hover {
+    opacity: 0.75;
+    text-decoration: underline;
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 500px) {
+    .student-page {
+        padding: 20px 15px;
+    }
+
+    .student-card {
+        padding: 30px 22px;
+    }
+
+    .student-title {
+        font-size: 23px;
+    }
+}
+/* THEME COLORS */
+
+
+/* Keep the rest of your existing CSS below */
