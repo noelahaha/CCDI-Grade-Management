@@ -495,7 +495,6 @@
 
                             </div>
 
-
                             <div class="form-group">
 
                                 <label class="form-label">
@@ -511,6 +510,40 @@
                                 >
 
                             </div>
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Year Level
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="year"
+                                    class="dashboard-input"
+                                    placeholder="1st"
+                                    required
+                                >
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Semester
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="semester"
+                                    class="dashboard-input"
+                                    placeholder="1st"
+                                    required
+                                >
+
+                            </div>
+                            
+                            
 
                         </div>
 

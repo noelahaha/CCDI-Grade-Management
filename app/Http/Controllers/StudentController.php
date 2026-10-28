@@ -38,6 +38,8 @@ class StudentController extends Controller
             'name' => $request->input('name'),
             'id_number' => $request->input('id_number'),
             'course' => $request->input('course'),
+            'year' => $request->input('year'),
+            'semester' => $request->input('semester'),
         ]);
 
         return back()->with('success', 'Student added successfully.');
