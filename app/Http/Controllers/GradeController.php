@@ -5,47 +5,55 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Grade;
 use App\Models\Student;
+use App\Models\Subjects;
 use PhpOffice\PhpWord\IOFactory;
 
 class GradeController extends Controller
 {
-    // Your existing manual grade entry
+    // Manual grade entry
     public function store(Request $request)
     {
-        $student = Grade::where('name', $request->input('name'))
-            ->where('id_number', $request->input('id_number'))
-            ->where('subject', $request->input('subject'))
+        $request->validate([
+            'id_number' => 'required|exists:students,id_number',
+            'subject' => 'required|exists:subjects,id',
+            'grade' => 'required',
+        ]);
+
+        $student = Student::where('id_number', $request->id_number)
             ->first();
 
-        if ($student) {
-            return back()->with('error', 'Grade already exists.');
+        $existingGrade = Grade::where('id_number', $student->id_number)
+            ->where('subject', $request->subject)
+            ->first();
+
+        if ($existingGrade) {
+            return back()
+                ->with('error', 'Grade already exists.')
+                ->with('active_tab', 'grades');
         }
 
         Grade::create([
-            'name' => $request->input('name'),
-            'id_number' => $request->input('id_number'),
-            'subject' => $request->input('subject'),
-            'grade' => $request->input('grade'),
+            'name' => $student->name,
+            'id_number' => $student->id_number,
+            'subject' => $request->subject,
+            'grade' => $request->grade,
         ]);
 
         return back()
-        ->with('success', 'Grade added successfully.')
-        ->with('active_tab', 'grades');
+            ->with('success', 'Grade added successfully.')
+            ->with('active_tab', 'grades');
     }
 
 
     // Upload grades from Word file
     public function upload(Request $request)
     {
-        // Check the uploaded file
         $request->validate([
             'grade_file' => 'required|file|mimes:docx|max:10240',
         ]);
 
-        // Get the Word file
         $file = $request->file('grade_file');
 
-        // Read the Word document
         $document = IOFactory::load($file->getPathname());
 
         $sections = $document->getSections();
@@ -58,7 +66,6 @@ class GradeController extends Controller
 
         $lines = [];
 
-        // Read the text from the Word document
         foreach ($section->getElements() as $element) {
 
             if ($element instanceof \PhpOffice\PhpWord\Element\Text) {
@@ -71,7 +78,6 @@ class GradeController extends Controller
             }
         }
 
-        // Make sure the file has a subject and students
         if (count($lines) < 2) {
             return back()->with(
                 'error',
@@ -79,18 +85,24 @@ class GradeController extends Controller
             );
         }
 
-        // First line is the subject
-        $subject = $lines[0];
+        // Find the subject using its name
+        $subject = Subjects::where('subject', trim($lines[0]))->first();
+
+        if (!$subject) {
+            return back()->with(
+                'error',
+                'The subject "' . $lines[0] . '" does not exist.'
+            )->with('active_tab', 'grades');
+        }
 
         $added = 0;
         $skipped = 0;
 
-        // Read the student lines
+        // Read student lines
         for ($i = 1; $i < count($lines); $i++) {
 
             $line = trim($lines[$i]);
 
-        
             if (!preg_match('/^(.+?)\s+(\d+(?:\.\d+)?)$/', $line, $matches)) {
                 $skipped++;
                 continue;
@@ -99,7 +111,6 @@ class GradeController extends Controller
             $studentName = trim($matches[1]);
             $grade = trim($matches[2]);
 
-            // Find the student in the students table
             $student = Student::where('name', $studentName)->first();
 
             if (!$student) {
@@ -107,10 +118,8 @@ class GradeController extends Controller
                 continue;
             }
 
-            // Check if the grade already exists
-            $existingGrade = Grade::where('name', $student->name)
-                ->where('id_number', $student->id_number)
-                ->where('subject', $subject)
+            $existingGrade = Grade::where('id_number', $student->id_number)
+                ->where('subject', $subject->id)
                 ->first();
 
             if ($existingGrade) {
@@ -118,22 +127,22 @@ class GradeController extends Controller
                 continue;
             }
 
-            // Add the grade
             Grade::create([
                 'name' => $student->name,
                 'id_number' => $student->id_number,
-                'subject' => $subject,
+                'subject' => $subject->id,
                 'grade' => $grade,
             ]);
 
             $added++;
         }
 
-        return back()->with(
-            'success',
-            $added . ' grades uploaded successfully. ' .
-            $skipped . ' entries were skipped.'
-        );
-        
+        return back()
+            ->with(
+                'success',
+                $added . ' grades uploaded successfully. ' .
+                $skipped . ' entries were skipped.'
+            )
+            ->with('active_tab', 'grades');
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Admin;
 use App\Models\Requests;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Subjects;
 
 class AdminController extends Controller
 {
@@ -112,11 +113,11 @@ class AdminController extends Controller
         return redirect('/admin');
     }
 
-    public function admin()
+  public function admin()
 {
     $requests = Requests::latest()->get();
+    $subjects = Subjects::all();
 
-    return view('admin', compact('requests'));
+    return view('admin', compact('requests', 'subjects'));
 }
-
 }

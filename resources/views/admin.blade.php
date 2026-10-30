@@ -205,105 +205,53 @@
                         Enter the student's grade information below.
                     </p>
 
+<form method="POST" action="/grade-upload">
+    @csrf
 
-                    <form method="POST" action="/grade-upload">
+    <div class="form-grid">
 
-                        @csrf
+        <div class="form-group">
+            <label class="form-label">ID Number</label>
 
+            <input type="text"
+                name="id_number"
+                class="dashboard-input"
+                placeholder="2020-00-000"
+                required>
+        </div>
 
-                        <div class="form-grid">
+        <div class="form-group">
+            <label class="form-label">Subject</label>
 
+            <select name="subject" required>
+                <option value="">Select Subject</option>
 
-                            <div class="form-group">
+                @foreach ($subjects as $subject)
+                    <option value="{{ $subject->id }}">
+                        {{ $subject->subject }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-                                <label class="form-label">
-                                    Student Name
-                                </label>
+        <div class="form-group">
+            <label class="form-label">Grade</label>
 
-                                <input type="text" name="name" class="dashboard-input"
-                                    placeholder="Enter student name" required>
+            <input type="text"
+                name="grade"
+                class="dashboard-input"
+                placeholder="Enter grade"
+                required>
+        </div>
 
-                            </div>
+    </div>
 
+    <input type="hidden" name="active_tab" value="grades">
 
-                            <div class="form-group">
-
-                                <label class="form-label">
-                                    ID Number
-                                </label>
-
-                                <input type="text" name="id_number" class="dashboard-input" placeholder="2020-00-000"
-                                    required>
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label class="form-label">
-                                    Subject
-                                </label>
-
-                                <input type="text" name="subject" class="dashboard-input" placeholder="Enter subject"
-                                    required>
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label class="form-label">
-                                    Grade
-                                </label>
-
-                                <input type="text" name="grade" class="dashboard-input" placeholder="Enter grade"
-                                    required>
-
-                            </div>
-
-                        </div>
-
-                        <input type="hidden" name="active_tab" value="grades">
-
-                        <button type="submit" class="primary-button">
-                            Submit Grade
-                        </button>
-
-                    </form>
-
-                </div>
-
-
-                <!-- FILE UPLOAD -->
-
-                <div class="upload-section">
-
-                    <h3 class="upload-title">
-                        File Entry
-                    </h3>
-
-                    <p class="upload-description">
-                        Upload a Word document containing grade records.
-                    </p>
-
-
-                    <form method="POST" action="{{ route('grades.upload') }}" enctype="multipart/form-data">
-
-                        @csrf
-
-
-                        <div class="file-row">
-
-                            <input type="file" name="grade_file" class="file-input" accept=".docx" required>
-
-                            <button type="submit" class="primary-button">
-                                Upload Grades
-                            </button>
-
-                        </div>
-
-                    </form>
-
+    <button type="submit" class="primary-button">
+        Submit Grade
+    </button>
+</form>
                 </div>
 
 
