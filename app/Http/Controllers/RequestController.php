@@ -33,7 +33,8 @@ class RequestController extends Controller
         $request->seen = !$request->seen;
         $request->save();
 
-        return back();
+         return back()
+        ->with('active_tab', 'requests');
     }
 
     public function printed(int $id)
@@ -43,6 +44,7 @@ class RequestController extends Controller
         $request->printed = !$request->printed;
         $request->save();
 
-        return back();
+         return back()
+        ->with('active_tab', 'requests');
     }
 }

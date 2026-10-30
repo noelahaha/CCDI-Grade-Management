@@ -42,7 +42,9 @@ class StudentController extends Controller
             'semester' => $request->input('semester'),
         ]);
 
-        return back()->with('success', 'Student added successfully.');
+        return back()
+        ->with('success', 'Student added successfully.')
+        ->with('active_tab', 'students');
     }
 
 

@@ -28,7 +28,9 @@ class GradeController extends Controller
             'grade' => $request->input('grade'),
         ]);
 
-        return back()->with('success', 'Grade added successfully.');
+        return back()
+        ->with('success', 'Grade added successfully.')
+        ->with('active_tab', 'grades');
     }
 
 
@@ -88,15 +90,7 @@ class GradeController extends Controller
 
             $line = trim($lines[$i]);
 
-            /*
-             * Example:
-             *
-             * Juan Dela Cruz    95
-             *
-             * Everything before the last number = student name
-             * Last number = grade
-             */
-
+        
             if (!preg_match('/^(.+?)\s+(\d+(?:\.\d+)?)$/', $line, $matches)) {
                 $skipped++;
                 continue;
@@ -140,5 +134,6 @@ class GradeController extends Controller
             $added . ' grades uploaded successfully. ' .
             $skipped . ' entries were skipped.'
         );
+        
     }
 }

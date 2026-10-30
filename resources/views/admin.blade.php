@@ -1,6 +1,6 @@
 <x-layout>
 
-   
+
 
 
     <div class="dashboard">
@@ -27,42 +27,27 @@
      TABS
 ======================================== -->
 
-<div class="tab-navigation">
+        <div class="tab-navigation">
 
-    <button
-        class="tab-button active"
-        id="tab-students"
-        onclick="showTab('students', this)"
-    >
-        Students
-    </button>
+            <button class="tab-button active" id="tab-students" onclick="showTab('students', this)">
+                Students
+            </button>
 
-    <button
-        class="tab-button"
-        id="tab-grades"
-        onclick="showTab('grades', this)"
-    >
-        Grades
-    </button>
+            <button class="tab-button" id="tab-grades" onclick="showTab('grades', this)">
+                Grades
+            </button>
 
-    <button
-        class="tab-button"
-        id="tab-requests"
-        onclick="showTab('requests', this)"
-    >
-        Requests
-    </button>
+            <button class="tab-button" id="tab-requests" onclick="showTab('requests', this)">
+                Requests
+            </button>
 
-</div>
+        </div>
 
         <!-- ========================================
              REQUESTS
         ======================================== -->
 
-        <div
-            id="requests"
-            class="tab-content"
-        >
+        <div id="requests" class="tab-content">
 
             <div class="dashboard-card">
 
@@ -109,7 +94,6 @@
                         <tbody>
 
                             @forelse ($requests as $request)
-
                                 <tr>
 
                                     <td>
@@ -131,23 +115,15 @@
 
                                     <td>
 
-                                        <form
-                                            method="POST"
-                                            action="{{ route('requests.seen', $request->id) }}"
-                                            class="checkbox-form"
-                                        >
-
+                                        <form method="POST" action="{{ route('requests.seen', $request->id) }}"
+                                            class="checkbox-form">
                                             @csrf
-
                                             @method('PATCH')
 
-                                            <input
-                                                type="checkbox"
-                                                class="status-checkbox"
-                                                onchange="this.form.submit()"
-                                                {{ $request->seen ? 'checked' : '' }}
-                                            >
+                                            <input type="hidden" name="active_tab" value="requests">
 
+                                            <input type="checkbox" class="status-checkbox" onchange="this.form.submit()"
+                                                {{ $request->seen ? 'checked' : '' }}>
                                         </form>
 
                                     </td>
@@ -155,23 +131,15 @@
 
                                     <td>
 
-                                        <form
-                                            method="POST"
-                                            action="{{ route('requests.printed', $request->id) }}"
-                                            class="checkbox-form"
-                                        >
-
+                                        <form method="POST" action="{{ route('requests.printed', $request->id) }}"
+                                            class="checkbox-form">
                                             @csrf
-
                                             @method('PATCH')
 
-                                            <input
-                                                type="checkbox"
-                                                class="status-checkbox"
-                                                onchange="this.form.submit()"
-                                                {{ $request->printed ? 'checked' : '' }}
-                                            >
+                                            <input type="hidden" name="active_tab" value="requests">
 
+                                            <input type="checkbox" class="status-checkbox" onchange="this.form.submit()"
+                                                {{ $request->printed ? 'checked' : '' }}>
                                         </form>
 
                                     </td>
@@ -182,15 +150,11 @@
 
                                 <tr>
 
-                                    <td
-                                        colspan="5"
-                                        class="empty-message"
-                                    >
+                                    <td colspan="5" class="empty-message">
                                         No grade requests yet.
                                     </td>
 
                                 </tr>
-
                             @endforelse
 
                         </tbody>
@@ -208,11 +172,7 @@
              GRADES
         ======================================== -->
 
-        <div
-            id="grades"
-            class="tab-content"
-            style="display: none;"
-        >
+        <div id="grades" class="tab-content" style="display: none;">
 
             <div class="dashboard-card">
 
@@ -246,10 +206,7 @@
                     </p>
 
 
-                    <form
-                        method="POST"
-                        action="/grade-upload"
-                    >
+                    <form method="POST" action="/grade-upload">
 
                         @csrf
 
@@ -263,13 +220,8 @@
                                     Student Name
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="name"
-                                    class="dashboard-input"
-                                    placeholder="Enter student name"
-                                    required
-                                >
+                                <input type="text" name="name" class="dashboard-input"
+                                    placeholder="Enter student name" required>
 
                             </div>
 
@@ -280,13 +232,8 @@
                                     ID Number
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="id_number"
-                                    class="dashboard-input"
-                                    placeholder="2020-00-000"
-                                    required
-                                >
+                                <input type="text" name="id_number" class="dashboard-input" placeholder="2020-00-000"
+                                    required>
 
                             </div>
 
@@ -297,13 +244,8 @@
                                     Subject
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="subject"
-                                    class="dashboard-input"
-                                    placeholder="Enter subject"
-                                    required
-                                >
+                                <input type="text" name="subject" class="dashboard-input" placeholder="Enter subject"
+                                    required>
 
                             </div>
 
@@ -314,23 +256,16 @@
                                     Grade
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="grade"
-                                    class="dashboard-input"
-                                    placeholder="Enter grade"
-                                    required
-                                >
+                                <input type="text" name="grade" class="dashboard-input" placeholder="Enter grade"
+                                    required>
 
                             </div>
 
                         </div>
 
+                        <input type="hidden" name="active_tab" value="grades">
 
-                        <button
-                            type="submit"
-                            class="primary-button"
-                        >
+                        <button type="submit" class="primary-button">
                             Submit Grade
                         </button>
 
@@ -352,29 +287,16 @@
                     </p>
 
 
-                    <form
-                        method="POST"
-                        action="{{ route('grades.upload') }}"
-                        enctype="multipart/form-data"
-                    >
+                    <form method="POST" action="{{ route('grades.upload') }}" enctype="multipart/form-data">
 
                         @csrf
 
 
                         <div class="file-row">
 
-                            <input
-                                type="file"
-                                name="grade_file"
-                                class="file-input"
-                                accept=".docx"
-                                required
-                            >
+                            <input type="file" name="grade_file" class="file-input" accept=".docx" required>
 
-                            <button
-                                type="submit"
-                                class="primary-button"
-                            >
+                            <button type="submit" class="primary-button">
                                 Upload Grades
                             </button>
 
@@ -387,21 +309,17 @@
 
                 <!-- MESSAGES -->
 
-                @if(session('success'))
-
+                @if (session('success'))
                     <div class="alert success-alert">
                         {{ session('success') }}
                     </div>
-
                 @endif
 
 
-                @if(session('error'))
-
+                @if (session('error'))
                     <div class="alert error-alert">
                         {{ session('error') }}
                     </div>
-
                 @endif
 
             </div>
@@ -413,11 +331,7 @@
              STUDENTS / EVALUATIONS
         ======================================== -->
 
-        <div
-            id="students"
-            class="tab-content"
-            style="display: none;"
-        >
+        <div id="students" class="tab-content" style="display: none;">
 
             <div class="dashboard-card">
 
@@ -451,10 +365,7 @@
                     </p>
 
 
-                    <form
-                        method="POST"
-                        action="/new-student"
-                    >
+                    <form method="POST" action="/new-student">
 
                         @csrf
 
@@ -468,13 +379,8 @@
                                     Student Name
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="name"
-                                    class="dashboard-input"
-                                    placeholder="Enter student name"
-                                    required
-                                >
+                                <input type="text" name="name" class="dashboard-input"
+                                    placeholder="Enter student name" required>
 
                             </div>
 
@@ -485,13 +391,8 @@
                                     ID Number
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="id_number"
-                                    class="dashboard-input"
-                                    placeholder="2020-00-000"
-                                    required
-                                >
+                                <input type="text" name="id_number" class="dashboard-input"
+                                    placeholder="2020-00-000" required>
 
                             </div>
 
@@ -501,13 +402,8 @@
                                     Course
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="course"
-                                    class="dashboard-input"
-                                    placeholder="BSCS"
-                                    required
-                                >
+                                <input type="text" name="course" class="dashboard-input" placeholder="BSCS"
+                                    required>
 
                             </div>
 
@@ -517,13 +413,8 @@
                                     Year Level
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="year"
-                                    class="dashboard-input"
-                                    placeholder="1st"
-                                    required
-                                >
+                                <input type="text" name="year" class="dashboard-input" placeholder="1st"
+                                    required>
 
                             </div>
 
@@ -533,25 +424,18 @@
                                     Semester
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="semester"
-                                    class="dashboard-input"
-                                    placeholder="1st"
-                                    required
-                                >
+                                <input type="text" name="semester" class="dashboard-input" placeholder="1st"
+                                    required>
 
                             </div>
-                            
-                            
+
+
 
                         </div>
 
+                        <input type="hidden" name="active_tab" value="students">
 
-                        <button
-                            type="submit"
-                            class="primary-button"
-                        >
+                        <button type="submit" class="primary-button">
                             Add Student
                         </button>
 
@@ -573,29 +457,16 @@
                     </p>
 
 
-                    <form
-                        method="POST"
-                        action="{{ route('students.upload') }}"
-                        enctype="multipart/form-data"
-                    >
+                    <form method="POST" action="{{ route('students.upload') }}" enctype="multipart/form-data">
 
                         @csrf
 
 
                         <div class="file-row">
 
-                            <input
-                                type="file"
-                                name="student_file"
-                                class="file-input"
-                                accept=".docx"
-                                required
-                            >
+                            <input type="file" name="student_file" class="file-input" accept=".docx" required>
 
-                            <button
-                                type="submit"
-                                class="primary-button"
-                            >
+                            <button type="submit" class="primary-button">
                                 Upload Students
                             </button>
 
@@ -608,21 +479,17 @@
 
                 <!-- MESSAGES -->
 
-                @if(session('error'))
-
+                @if (session('error'))
                     <div class="alert error-alert">
                         {{ session('error') }}
                     </div>
-
                 @endif
 
 
-                @if(session('success'))
-
+                @if (session('success'))
                     <div class="alert success-alert">
                         {{ session('success') }}
                     </div>
-
                 @endif
 
             </div>
@@ -635,8 +502,7 @@
     <!-- ========================================
          TAB SCRIPT
     ======================================== -->
-<script>
-
+   <script>
     function showTab(tabName, button) {
 
         document.querySelectorAll('.tab-content').forEach(tab => {
@@ -652,6 +518,17 @@
         button.classList.add('active');
     }
 
-</script>
+    // Restore the tab after form submission
+    document.addEventListener('DOMContentLoaded', function() {
 
+        const activeTab = @json(session('active_tab', 'requests'));
+
+        const button = document.getElementById('tab-' + activeTab);
+
+        if (button) {
+            showTab(activeTab, button);
+        }
+
+    });
+    </script>
 </x-layout>
