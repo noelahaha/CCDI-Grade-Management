@@ -1,4 +1,4 @@
-<x-layout>
+{{-- <x-layout>
 
     
 
@@ -189,4 +189,4 @@
 
     </script>
 
-</x-layout>
+</x-layout> --}}

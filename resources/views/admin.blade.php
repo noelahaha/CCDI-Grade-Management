@@ -254,6 +254,43 @@
 </form>
                 </div>
 
+                <!-- WORD FILE UPLOAD -->
+
+<div class="upload-divider"></div>
+
+<div>
+    <h3 class="upload-title">
+        Upload Using Word File
+    </h3>
+
+    <p class="upload-description">
+        Upload a .docx file containing the subject and student grades.
+    </p>
+
+    <form method="POST"
+          action="{{ route('grades.upload') }}"
+          enctype="multipart/form-data">
+
+        @csrf
+
+        <div class="form-group">
+            <label class="form-label">Select Word File</label>
+
+            <input type="file"
+                   name="grade_file"
+                   class="file-input"
+                   accept=".docx"
+                   required>
+        </div>
+
+        <input type="hidden" name="active_tab" value="grades">
+
+        <button type="submit" class="primary-button">
+            Upload Grades
+        </button>
+
+    </form>
+</div>
 
                 <!-- MESSAGES -->
 

@@ -20,3 +20,10 @@ Route::patch('/requests/{id}/seen', [RequestController::class, 'seen'])
 
 Route::patch('/requests/{id}/printed', [RequestController::class, 'printed'])
     ->name('requests.printed');
+
+
+
+//Combined Login    
+    Route::get('/login', function () {
+    return view('welcome');
+})->name('login');

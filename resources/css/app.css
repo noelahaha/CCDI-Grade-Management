@@ -1381,3 +1381,224 @@ body.dark-mode .error-alert {
 
 
 /* Keep the rest of your existing CSS below */
+
+
+/* ========================================
+   COMBINED LOGIN PAGE
+======================================== */
+
+.combined-login-page {
+    min-height: calc(100vh - 110px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.combined-login-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 35px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+}
+
+
+/* LOGO */
+
+.combined-login-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.combined-login-logo img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+}
+
+
+/* TITLE */
+
+.combined-login-title {
+    text-align: center;
+    font-size: 25px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #222;
+}
+
+.combined-login-subtitle {
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+
+/* TABS */
+
+.login-tabs {
+    display: flex;
+    width: 100%;
+    border-bottom: 2px solid #e5e5e5;
+    margin-bottom: 25px;
+}
+
+.login-tab {
+    flex: 1;
+    padding: 13px;
+    border: none;
+    background: transparent;
+    color: #777;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: 0.2s;
+}
+
+.login-tab:hover {
+    color: #222;
+}
+
+.login-tab.active {
+    color: #1d4ed8;
+    border-bottom-color: #1d4ed8;
+}
+
+
+/* LOGIN PANEL */
+
+.login-panel-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 6px;
+}
+
+.login-panel-description {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 25px;
+}
+
+
+/* FORM */
+
+.login-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.login-form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.login-form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d5d5d5;
+    border-radius: 7px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: 0.2s;
+}
+
+.login-form-group input:focus {
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.1);
+}
+
+
+/* PASSWORD */
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    padding-right: 48px;
+}
+
+.show-password {
+    position: absolute;
+    right: 12px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+
+/* LOGIN BUTTON */
+
+.combined-login-button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 7px;
+    background: #1d4ed8;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.combined-login-button:hover {
+    background: #1e40af;
+}
+
+
+/* ERROR MESSAGE */
+
+.login-message {
+    padding: 11px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.login-message.error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+
+/* FOOTER */
+
+.combined-login-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 18px;
+    border-top: 1px solid #eee;
+    color: #888;
+    font-size: 12px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 480px) {
+
+    .combined-login-card {
+        padding: 25px 20px;
+    }
+
+    .combined-login-title {
+        font-size: 22px;
+    }
+
+}
+
