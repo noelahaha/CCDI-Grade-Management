@@ -244,6 +244,25 @@
                 required>
         </div>
 
+        
+         <div class="form-group">
+            <label class="form-label">Status</label>
+
+            <input type="text"
+                name="status"
+                class="dashboard-input"
+                placeholder="INC, PASSED, FAILED">
+        </div>
+
+         <div class="form-group">
+            <label class="form-label">Reason</label>
+
+            <input type="text"
+                name="inc_reason"
+                class="dashboard-input"
+                placeholder="No Final Exam, etc.">
+        </div>
+
     </div>
 
     <input type="hidden" name="active_tab" value="grades">
