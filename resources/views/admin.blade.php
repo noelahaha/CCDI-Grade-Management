@@ -29,143 +29,247 @@
 
         <div class="tab-navigation">
 
-            <button class="tab-button active" id="tab-students" onclick="showTab('students', this)">
-                Students
-            </button>
+    <button class="tab-button active"
+            id="tab-students"
+            onclick="showTab('students', this)">
+        Students
+    </button>
 
-            <button class="tab-button" id="tab-grades" onclick="showTab('grades', this)">
-                Grades
-            </button>
+    <button class="tab-button"
+            id="tab-grades"
+            onclick="showTab('grades', this)">
+        Grades
+    </button>
 
-            <button class="tab-button" id="tab-requests" onclick="showTab('requests', this)">
-                Requests
-            </button>
+    <button class="tab-button"
+            id="tab-requests"
+            onclick="showTab('requests', this); markRequestsSeen()">
 
-        </div>
+        Requests
 
-        <!-- ========================================
-             REQUESTS
-        ======================================== -->
+        @if (($newRequestCount ?? 0) > 0)
+            <span class="request-notification" id="requestNotification">
+                {{ $newRequestCount }}
+            </span>
+        @endif
 
-        <div id="requests" class="tab-content">
+    </button>
 
-            <div class="dashboard-card">
+</div>
+       
+<!-- ========================================
+     REQUESTS
+======================================== -->
 
-                <div class="section-header">
+<div id="requests" class="tab-content">
 
-                    <div>
+    <div class="dashboard-card">
 
-                        <h2 class="section-title">
-                            Grade Requests
-                        </h2>
+        <div class="section-header">
 
-                        <p class="section-description">
-                            View and manage student grade requests.
-                        </p>
+            <div>
 
-                    </div>
+                <h2 class="section-title">
+                    Grade Requests
+                </h2>
 
-                </div>
-
-
-                <div class="table-wrapper">
-
-                    <table class="request-table">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Name</th>
-
-                                <th>ID Number</th>
-
-                                <th>Course</th>
-
-                                <th>Seen</th>
-
-                                <th>Printed</th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            @forelse ($requests as $request)
-                                <tr>
-
-                                    <td>
-                                        {{ $request->name }}
-                                    </td>
-
-                                    <td>
-                                        {{ $request->id_number }}
-                                    </td>
-
-                                    <td>
-
-                                        <span class="course-badge">
-                                            {{ $request->course }}
-                                        </span>
-
-                                    </td>
-
-
-                                    <td>
-
-                                        <form method="POST" action="{{ route('requests.seen', $request->id) }}"
-                                            class="checkbox-form">
-                                            @csrf
-                                            @method('PATCH')
-
-                                            <input type="hidden" name="active_tab" value="requests">
-
-                                            <input type="checkbox" class="status-checkbox" onchange="this.form.submit()"
-                                                {{ $request->seen ? 'checked' : '' }}>
-                                        </form>
-
-                                    </td>
-
-
-                                    <td>
-
-                                        <form method="POST" action="{{ route('requests.printed', $request->id) }}"
-                                            class="checkbox-form">
-                                            @csrf
-                                            @method('PATCH')
-
-                                            <input type="hidden" name="active_tab" value="requests">
-
-                                            <input type="checkbox" class="status-checkbox" onchange="this.form.submit()"
-                                                {{ $request->printed ? 'checked' : '' }}>
-                                        </form>
-
-                                    </td>
-
-                                </tr>
-
-                            @empty
-
-                                <tr>
-
-                                    <td colspan="5" class="empty-message">
-                                        No grade requests yet.
-                                    </td>
-
-                                </tr>
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                <p class="section-description">
+                    View and manage student grade requests.
+                </p>
 
             </div>
 
+            <!-- FILTER -->
+
+            <form method="GET" action="{{ url('/admin') }}"
+                  class="request-filter-form">
+
+                <input type="hidden" name="active_tab" value="requests">
+
+                <select name="filter"
+                        class="request-filter-select"
+                        onchange="this.form.submit()">
+
+                    <option value="">All Requests</option>
+
+                    <option value="available"
+                        {{ request('filter') === 'available' ? 'selected' : '' }}>
+                        Available
+                    </option>
+
+                    <option value="not_available"
+                        {{ request('filter') === 'not_available' ? 'selected' : '' }}>
+                        Not Available
+                    </option>
+
+                    <option value="received"
+                        {{ request('filter') === 'received' ? 'selected' : '' }}>
+                        Received
+                    </option>
+
+                    <option value="today"
+                        {{ request('filter') === 'today' ? 'selected' : '' }}>
+                        Today
+                    </option>
+
+                    <option value="this_week"
+                        {{ request('filter') === 'this_week' ? 'selected' : '' }}>
+                        This Week
+                    </option>
+
+                    <option value="this_month"
+                        {{ request('filter') === 'this_month' ? 'selected' : '' }}>
+                        This Month
+                    </option>
+
+                </select>
+
+            </form>
+
         </div>
+
+
+        <div class="table-wrapper">
+
+            <table class="request-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Name</th>
+                        <th>ID Number</th>
+                        <th>Course</th>
+                        <th>Not Available</th>
+                        <th>Available</th>
+                        <th>Received</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @forelse ($requests as $request)
+
+                        <tr>
+
+                            <td>
+                                {{ $request->name }}
+                            </td>
+
+                            <td>
+                                {{ $request->id_number }}
+                            </td>
+
+                            <td>
+                                <span class="course-badge">
+                                    {{ $request->course }}
+                                </span>
+                            </td>
+
+
+                            <!-- NOT AVAILABLE -->
+
+                            <td>
+
+                                <form method="POST"
+                                      action="{{ route('requests.availability', $request->id) }}"
+                                      class="checkbox-form">
+
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <input type="hidden"
+                                           name="available"
+                                           value="{{ $request->available ? 1 : 0 }}">
+
+                                    <input type="checkbox"
+                                           class="status-checkbox"
+                                           data-availability
+                                           data-value="0"
+                                           {{ !$request->available ? 'checked' : '' }}
+                                           onchange="changeAvailability(this)">
+
+                                </form>
+
+                            </td>
+
+
+                            <!-- AVAILABLE -->
+
+                            <td>
+
+                                <form method="POST"
+                                      action="{{ route('requests.availability', $request->id) }}"
+                                      class="checkbox-form">
+
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <input type="hidden"
+                                           name="available"
+                                           value="{{ $request->available ? 1 : 0 }}">
+
+                                    <input type="checkbox"
+                                           class="status-checkbox"
+                                           data-availability
+                                           data-value="1"
+                                           {{ $request->available ? 'checked' : '' }}
+                                           onchange="changeAvailability(this)">
+
+                                </form>
+
+                            </td>
+
+
+                            <!-- RECEIVED -->
+
+                            <td>
+
+                                <form method="POST"
+                                      action="{{ route('requests.received', $request->id) }}"
+                                      class="checkbox-form">
+
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <input type="hidden"
+                                           name="received"
+                                           value="{{ $request->received ? 1 : 0 }}">
+
+                                    <input type="checkbox"
+                                           class="status-checkbox"
+                                           {{ $request->received ? 'checked' : '' }}
+                                           onchange="updateReceived(this)">
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td colspan="6" class="empty-message">
+                                No grade requests found.
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 
         <!-- ========================================
@@ -525,7 +629,7 @@
     // Restore the tab after form submission
     document.addEventListener('DOMContentLoaded', function() {
 
-        const activeTab = @json(session('active_tab', 'requests'));
+       const activeTab = @json(request('active_tab', session('active_tab', 'requests')));
 
         const button = document.getElementById('tab-' + activeTab);
 
@@ -534,5 +638,78 @@
         }
 
     });
+
+
+    // ========================================
+// CHANGE AVAILABILITY
+// ========================================
+
+function changeAvailability(checkbox) {
+
+    const form = checkbox.closest('form');
+
+    // Set the availability value based on which checkbox was clicked
+    form.querySelector('input[name="available"]').value =
+        checkbox.dataset.value;
+
+    form.submit();
+}
+
+
+// ========================================
+// CHANGE RECEIVED STATUS
+// ========================================
+
+function updateReceived(checkbox) {
+
+    const form = checkbox.closest('form');
+
+    form.querySelector('input[name="received"]').value =
+        checkbox.checked ? 1 : 0;
+
+    form.submit();
+}
+
+
+// ========================================
+// MARK NEW REQUESTS AS SEEN
+// ========================================
+
+async function markRequestsSeen() {
+
+    const badge = document.getElementById('requestNotification');
+
+    if (!badge) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "{{ route('requests.mark-all-seen') }}",
+            {
+                method: 'PATCH',
+
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Could not update request notifications.');
+        }
+
+        // Remove the badge after the server confirms the update
+        badge.remove();
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
     </script>
 </x-layout>

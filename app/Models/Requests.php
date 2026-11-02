@@ -14,5 +14,7 @@ class Requests extends Model
         'course',
         'seen',
         'printed',
+        'available',
+        'received',
     ];
 }

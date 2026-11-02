@@ -27,3 +27,5 @@ Route::patch('/requests/{id}/printed', [RequestController::class, 'printed'])
     Route::get('/login', function () {
     return view('welcome');
 })->name('login');
+
+

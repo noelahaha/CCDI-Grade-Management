@@ -1602,3 +1602,93 @@ body.dark-mode .error-alert {
 
 }
 
+/* ========================================
+   REQUEST NOTIFICATION BADGE
+======================================== */
+
+.request-notification {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 21px;
+    height: 21px;
+
+    margin-left: 7px;
+    padding: 0 5px;
+
+    background: #dc2626;
+    color: white;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    border-radius: 50%;
+    line-height: 1;
+}
+
+
+/* ========================================
+   REQUEST FILTER
+======================================== */
+
+.request-filter-form {
+    display: flex;
+    align-items: center;
+}
+
+.request-filter-select {
+    min-width: 160px;
+    padding: 10px 12px;
+
+    border: 1px solid #d5d5d5;
+    border-radius: 7px;
+
+    background: white;
+    color: #333;
+
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+}
+
+.request-filter-select:focus {
+    border-color: #1d4ed8;
+}
+
+
+/* ========================================
+   REQUEST STATUS CHECKBOXES
+======================================== */
+
+.request-table .checkbox-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.request-table .status-checkbox {
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    accent-color: #1d4ed8;
+}
+
+
+/* ========================================
+   RESPONSIVE FILTER
+======================================== */
+
+@media (max-width: 600px) {
+
+    .request-filter-form {
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .request-filter-select {
+        width: 100%;
+    }
+
+}

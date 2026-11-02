@@ -113,11 +113,53 @@ class AdminController extends Controller
         return redirect('/admin');
     }
 
-  public function admin()
+  public function admin(Request $request)
 {
-    $requests = Requests::latest()->get();
+    $query = Requests::query()->latest();
+
+    // Apply request filters
+    switch ($request->query('filter')) {
+
+        case 'available':
+            $query->where('available', 1);
+            break;
+
+        case 'not_available':
+            $query->where('available', 0);
+            break;
+
+        case 'received':
+            $query->where('received', 1);
+            break;
+
+        case 'today':
+            $query->whereDate('created_at', today());
+            break;
+
+        case 'this_week':
+            $query->whereBetween('created_at', [
+                now()->startOfWeek(),
+                now()->endOfWeek()
+            ]);
+            break;
+
+        case 'this_month':
+            $query->whereYear('created_at', now()->year)
+                  ->whereMonth('created_at', now()->month);
+            break;
+    }
+
+    $requests = $query->get();
+
+    // Count requests that have not been viewed yet
+    $newRequestCount = Requests::where('seen', 0)->count();
+
     $subjects = Subjects::all();
 
-    return view('admin', compact('requests', 'subjects'));
+    return view('admin', compact(
+        'requests',
+        'subjects',
+        'newRequestCount'
+    ));
 }
 }
