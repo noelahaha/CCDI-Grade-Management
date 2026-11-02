@@ -8,58 +8,85 @@ use PhpOffice\PhpWord\IOFactory;
 
 class StudentController extends Controller
 {
-    public function login(Request $request)
-    {
-        $student = Student::where('name', $request->input('name'))
-            ->where('id_number', $request->input('id_number'))
-            ->first();
+    // ========================================
+    // STUDENT LOGIN
+    // ========================================
 
-        if ($student) {
-            return redirect('/dashboard');
-        }
-
-        return back()->with('error', 'Name or ID Number is incorrect.');
-    }
-
-
-    // Manual student entry
     public function store(Request $request)
     {
-        $student = Student::where('name', $request->input('name'))
-            ->where('id_number', $request->input('id_number'))
-            ->where('course', $request->input('course'))
-            ->first();
-
-        if ($student) {
-            return back()->with('error', 'Student already exists.');
-        }
-
-        Student::create([
-            'name' => $request->input('name'),
-            'id_number' => $request->input('id_number'),
-            'course' => $request->input('course'),
-            'year' => $request->input('year'),
-            'semester' => $request->input('semester'),
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'id_number' => 'required|string|max:255',
         ]);
 
-        return back()
-        ->with('success', 'Student added successfully.')
-        ->with('active_tab', 'students');
+        // Find an existing student
+        $student = Student::where('name', $request->name)
+            ->where('id_number', $request->id_number)
+            ->first();
+
+        // Reject incorrect information
+        if (!$student) {
+            return back()->with(
+                'error',
+                'Name or ID Number is incorrect.'
+            );
+        }
+
+        // Store verified student ID in session
+        session(['student_id' => $student->id]);
+
+        return redirect('/dashboard');
     }
 
 
-    // Word file student upload
+    // ========================================
+    // MANUAL STUDENT ENTRY
+    // ========================================
+
+    public function addStudent(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'id_number' => 'required|string|max:255',
+            'course' => 'required|string|max:255',
+            'year' => 'required',
+            'semester' => 'required',
+        ]);
+
+        // Check if student already exists
+        $student = Student::where('id_number', $data['id_number'])
+            ->first();
+
+        if ($student) {
+            return back()
+                ->with('error', 'Student already exists.')
+                ->with('active_tab', 'students');
+        }
+
+        // Add the student
+        Student::create($data);
+
+        return back()
+            ->with('success', 'Student added successfully.')
+            ->with('active_tab', 'students');
+    }
+
+
+    // ========================================
+    // WORD FILE STUDENT UPLOAD
+    // ========================================
+
     public function upload(Request $request)
     {
-        // Check the uploaded file
+        // Check uploaded file
         $request->validate([
             'student_file' => 'required|file|mimes:docx|max:10240',
         ]);
 
-        // Get the Word file
+        // Get Word file
         $file = $request->file('student_file');
 
-        // Read the Word document
+        // Read document
         $document = IOFactory::load($file->getPathname());
 
         $sections = $document->getSections();
@@ -72,7 +99,7 @@ class StudentController extends Controller
 
         $lines = [];
 
-        // Read the text from the Word document
+        // Read text from Word document
         foreach ($section->getElements() as $element) {
 
             if ($element instanceof \PhpOffice\PhpWord\Element\Text) {
@@ -115,14 +142,17 @@ class StudentController extends Controller
             $course = trim($matches[3]);
 
             // Check if ID number already exists
-            $existingStudent = Student::where('id_number', $idNumber)->first();
+            $existingStudent = Student::where(
+                'id_number',
+                $idNumber
+            )->first();
 
             if ($existingStudent) {
                 $skipped++;
                 continue;
             }
 
-            // Add the student
+            // Add student
             Student::create([
                 'name' => $name,
                 'id_number' => $idNumber,
@@ -132,10 +162,12 @@ class StudentController extends Controller
             $added++;
         }
 
-        return back()->with(
-            'success',
-            $added . ' students added successfully. ' .
-            $skipped . ' entries were skipped.'
-        );
+        return back()
+            ->with(
+                'success',
+                $added . ' students added successfully. ' .
+                $skipped . ' entries were skipped.'
+            )
+            ->with('active_tab', 'students');
     }
 }
