@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\StudentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,3 +30,14 @@ Route::patch('/requests/{id}/printed', [RequestController::class, 'printed'])
 })->name('login');
 
 
+
+
+Route::post('/login-info', [StudentController::class, 'login'])
+    ->name('login-info');
+
+Route::get('/session-check', function () {
+    return [
+        'session_id' => session()->getId(),
+        'student_id' => session('student_id'),
+    ];
+});

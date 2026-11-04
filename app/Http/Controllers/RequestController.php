@@ -2,22 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Student;
 use App\Models\Requests;
+use Illuminate\Http\Request;
 
 class RequestController extends Controller
 {
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'id_number' => 'required|string|max:255',
-        ]);
+ public function store(Request $request)
+{
+    $student = Student::find(session('student_id'));
 
-        Requests::create($request->all());
-
-        return back()->with('success', 'Request submitted successfully.');
+    if (!$student) {
+        return redirect('/login')
+            ->with('error', 'Please log in first.');
     }
+
+    Requests::create([
+        'name' => $student->name,
+        'id_number' => $student->id_number,
+        'course' => $student->course,
+    ]);
+
+    return back()->with(
+        'success',
+        'Your request was submitted successfully.'
+    );
+}
 
     public function dashboard()
     {

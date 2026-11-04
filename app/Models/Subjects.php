@@ -10,5 +10,10 @@ class Subjects extends Model
 
     protected $fillable = [
         'subject',
+        'units',
+        'course',
+        'year',
+        'semester',
+        'school_year',
     ];
 }

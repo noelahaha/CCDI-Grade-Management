@@ -7,46 +7,129 @@ use App\Models\Grade;
 use App\Models\Student;
 use App\Models\Subjects;
 use PhpOffice\PhpWord\IOFactory;
+use Illuminate\Support\Facades\DB;
 
 class GradeController extends Controller
 {
     // Manual grade entry
-    public function store(Request $request)
-    {
-        $request->validate([
-            'id_number' => 'required|exists:students,id_number',
-            'subject' => 'required|exists:subjects,id',
-            'grade' => 'required',
-            'status' => 'nullable|string|max:50',
-            'inc_reason' => 'nullable|string',
-        ]);
+    
 
-        $student = Student::where('id_number', $request->id_number)
+public function store(Request $request)
+{
+    // Validate submitted information
+    $data = $request->validate([
+        'student_id' => 'required|exists:students,id',
+
+        'school_year' => [
+            'required',
+            'regex:/^\d{4}-\d{4}$/',
+        ],
+
+        'year' => 'required|in:1st,2nd,3rd,4th',
+
+        'semester' => 'required|in:1st,2nd',
+
+        'grades' => 'required|array|min:1',
+
+        'grades.*.subject_id' => 'required|exists:subjects,id',
+
+        'grades.*.grade' => 'nullable|numeric',
+
+        'grades.*.status' => 'nullable|string|max:255',
+
+        'grades.*.inc_reason' => 'nullable|string',
+    ]);
+
+    // Find student
+    $student = Student::findOrFail($data['student_id']);
+
+    // Convert dropdown values to the actual database format
+    $subjectYear = $data['year'] . ' Year';
+    $subjectSemester = $data['semester'] . ' Semester';
+
+    // Verify submitted subjects
+    foreach ($data['grades'] as $row) {
+
+        $subject = Subjects::where('id', $row['subject_id'])
+            ->where('course', $student->course)
+            ->where('year', $subjectYear)
+            ->where('semester', $subjectSemester)
+            ->where('school_year', $data['school_year'])
             ->first();
 
-        $existingGrade = Grade::where('id_number', $student->id_number)
-            ->where('subject', $request->subject)
-            ->first();
-
-        if ($existingGrade) {
+        if (!$subject) {
             return back()
-                ->with('error', 'Grade already exists.')
+                ->with('error', 'Subject does not match the selected student and academic period.')
                 ->with('active_tab', 'grades');
         }
+    }
 
-        Grade::create([
-            'name' => $student->name,
-            'id_number' => $student->id_number,
-            'subject' => $request->subject,
-            'grade' => $request->grade,
-            'status' => $request->status,
-            'inc_reason' => $request->inc_reason,
-        ]);
+    $saved = 0;
+    $skipped = 0;
 
+    // Save or update grades
+    \Illuminate\Support\Facades\DB::transaction(function () use (
+        $data,
+        $student,
+        &$saved,
+        &$skipped
+    ) {
+
+        foreach ($data['grades'] as $row) {
+
+            $grade = trim((string) ($row['grade'] ?? ''));
+            $status = trim((string) ($row['status'] ?? ''));
+            $reason = trim((string) ($row['inc_reason'] ?? ''));
+
+            // Skip completely empty rows
+            if (
+                $grade === '' &&
+                $status === '' &&
+                $reason === ''
+            ) {
+                $skipped++;
+                continue;
+            }
+
+            // Find existing grade or create a new one
+            Grade::updateOrCreate(
+                [
+                    'id_number' => $student->id_number,
+                    'subject' => $row['subject_id'],
+                ],
+                [
+                    'name' => $student->name,
+                    'grade' => $grade === '' ? null : $grade,
+                    'status' => $status === '' ? null : $status,
+                    'inc_reason' => $reason === '' ? null : $reason,
+                ]
+            );
+
+            $saved++;
+        }
+    });
+
+    if ($saved == 0) {
         return back()
-            ->with('success', 'Grade added successfully.')
+            ->with('error', 'Please enter at least one grade, status, or reason.')
             ->with('active_tab', 'grades');
     }
+
+    // Return to the same student's grade table
+    return redirect('/admin?' . http_build_query([
+        'student_lookup' => $student->id_number,
+        'school_year' => $data['school_year'],
+        'grade_year' => $data['year'],
+        'grade_semester' => $data['semester'],
+    ]))
+        ->with(
+            'success',
+            $saved . ' subject grades saved or updated successfully. ' .
+            $skipped . ' empty rows were skipped.'
+        )
+        ->with('active_tab', 'grades');
+}
+
 
 
     // Upload grades from Word file

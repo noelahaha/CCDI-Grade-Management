@@ -3,4 +3,5 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 
-Route::get('/admin', [AdminController::class, 'admin']);
+Route::get('/admin', [AdminController::class, 'admin'])
+    ->middleware('admin');

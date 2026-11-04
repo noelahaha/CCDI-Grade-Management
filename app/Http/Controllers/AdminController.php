@@ -5,12 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\Requests;
+use App\Models\Subjects;
+use App\Models\Student;
+use App\Models\Grade;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Subjects;
 
 class AdminController extends Controller
 {
+    // ========================================
+    // ADMIN LOGIN
+    // ========================================
+
     public function login(Request $request)
     {
         // Keep the name exactly as typed
@@ -21,6 +27,7 @@ class AdminController extends Controller
 
         // Check if currently locked
         $lockedUntil = Cache::get($key . ':locked');
+
         if ($lockedUntil) {
 
             $seconds = now()->diffInSeconds(
@@ -43,7 +50,6 @@ class AdminController extends Controller
         // Wrong username or password
         if (!$admin || !Hash::check($request->input('password'), $admin->password)) {
 
-            // Get current number of failed attempts
             $attempts = Cache::get($key . ':attempts', 0);
 
             $attempts++;
@@ -106,60 +112,186 @@ class AdminController extends Controller
             );
         }
 
-        // Successful login
-        Cache::forget($key . ':attempts');
-        Cache::forget($key . ':locked');
+       // Successful login
+Cache::forget($key . ':attempts');
+Cache::forget($key . ':locked');
 
-        return redirect('/admin');
+// Regenerate session for security
+$request->session()->regenerate();
+
+// Save admin information in session
+$request->session()->put('admin_id', $admin->id);
+$request->session()->put('admin_name', $admin->name);
+
+return redirect('/admin');
     }
 
-  public function admin(Request $request)
-{
-    $query = Requests::query()->latest();
 
-    // Apply request filters
-    switch ($request->query('filter')) {
+    // ========================================
+    // ADMIN DASHBOARD
+    // ========================================
 
-        case 'available':
-            $query->where('available', 1);
-            break;
+    public function admin(Request $request)
+    {
+        // ====================================
+        // REQUEST MANAGEMENT
+        // ====================================
 
-        case 'not_available':
-            $query->where('available', 0);
-            break;
+        $query = Requests::query()->latest();
 
-        case 'received':
-            $query->where('received', 1);
-            break;
+        // Apply request filters
+        switch ($request->query('filter')) {
 
-        case 'today':
-            $query->whereDate('created_at', today());
-            break;
+            case 'available':
+                $query->where('available', 1);
+                break;
 
-        case 'this_week':
-            $query->whereBetween('created_at', [
-                now()->startOfWeek(),
-                now()->endOfWeek()
-            ]);
-            break;
+            case 'not_available':
+                $query->where('available', 0);
+                break;
 
-        case 'this_month':
-            $query->whereYear('created_at', now()->year)
-                  ->whereMonth('created_at', now()->month);
-            break;
+            case 'received':
+                $query->where('received', 1);
+                break;
+
+            case 'today':
+                $query->whereDate('created_at', today());
+                break;
+
+            case 'this_week':
+                $query->whereBetween('created_at', [
+                    now()->startOfWeek(),
+                    now()->endOfWeek()
+                ]);
+                break;
+
+            case 'this_month':
+                $query->whereYear('created_at', now()->year)
+                    ->whereMonth('created_at', now()->month);
+                break;
+        }
+
+        $requests = $query->get();
+
+        // Count requests not viewed yet
+        $newRequestCount = Requests::where('seen', 0)->count();
+
+
+        // ====================================
+        // SUBJECT MANAGEMENT
+        // ====================================
+
+        // Keep all subjects available for other admin tabs
+        $subjects = Subjects::all();
+
+
+        // ====================================
+        // MANUAL GRADE SEARCH
+        // ====================================
+
+        $selectedStudent = null;
+        $selectedSchoolYear = '';
+
+        $gradeSubjects = collect();
+        $existingGrades = collect();
+
+        // Get search inputs
+        $lookup = trim(
+            $request->query('student_lookup', '')
+        );
+
+        $schoolYear = trim(
+            $request->query('school_year', '')
+        );
+
+        $gradeYear = $request->query('grade_year');
+
+        $gradeSemester = $request->query('grade_semester');
+
+
+        // Search only when required inputs are provided
+        if (
+            $lookup !== '' &&
+            in_array($gradeYear, ['1st', '2nd', '3rd', '4th']) &&
+            in_array($gradeSemester, ['1st', '2nd'])
+        ) {
+
+            // Search by ID number or student name
+            $selectedStudent = Student::where(function ($query) use ($lookup) {
+
+                $query->where('id_number', $lookup)
+                    ->orWhere('name', 'LIKE', '%' . $lookup . '%');
+
+            })
+            ->orderByRaw(
+                'CASE WHEN id_number = ? THEN 0 WHEN name = ? THEN 1 ELSE 2 END',
+                [$lookup, $lookup]
+            )
+            ->first();
+
+
+            if ($selectedStudent) {
+
+                // Use entered school year.
+                // If empty, use the student's school year.
+                $selectedSchoolYear = $schoolYear !== ''
+                    ? $schoolYear
+                    : $selectedStudent->school_year;
+
+
+                // Get subjects matching:
+                // Student course
+                // Selected year
+                // Selected semester
+                // Selected school year
+
+                // Convert selected filters to match database values
+$subjectYear = $gradeYear . ' Year';
+$subjectSemester = $gradeSemester . ' Semester';
+
+// Get matching subjects
+$gradeSubjects = Subjects::where(
+    'course',
+    trim($selectedStudent->course)
+)
+    ->whereRaw('TRIM(year) = ?', [$subjectYear])
+    ->whereRaw('TRIM(semester) = ?', [$subjectSemester])
+    ->where('school_year', trim($selectedSchoolYear))
+    ->orderBy('subject')
+    ->get();
+
+
+                // Get previously saved grades
+                $existingGrades = Grade::where(
+                    'id_number',
+                    $selectedStudent->id_number
+                )
+                    ->whereIn(
+                        'subject',
+                        $gradeSubjects->pluck('id')
+                    )
+                    ->get()
+                    ->keyBy('subject');
+
+            }
+
+            // Keep registrar on Grades tab after searching
+            session()->flash('active_tab', 'grades');
+        }
+
+
+        // ====================================
+        // RETURN ADMIN DASHBOARD
+        // ====================================
+
+        return view('admin', compact(
+            'requests',
+            'subjects',
+            'newRequestCount',
+            'selectedStudent',
+            'selectedSchoolYear',
+            'gradeSubjects',
+            'existingGrades'
+        ));
     }
-
-    $requests = $query->get();
-
-    // Count requests that have not been viewed yet
-    $newRequestCount = Requests::where('seen', 0)->count();
-
-    $subjects = Subjects::all();
-
-    return view('admin', compact(
-        'requests',
-        'subjects',
-        'newRequestCount'
-    ));
-}
 }

@@ -276,163 +276,369 @@
              GRADES
         ======================================== -->
 
-        <div id="grades" class="tab-content" style="display: none;">
+<!-- ========================================
+     GRADES
+======================================== -->
 
-            <div class="dashboard-card">
+<div id="grades" class="tab-content" style="display: none;">
 
-                <div class="section-header">
+    <div class="dashboard-card">
 
-                    <div>
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Upload Grades</h2>
+                <p class="section-description">
+                    Manage student grades manually or upload them using a Word file.
+                </p>
+            </div>
+        </div>
 
-                        <h2 class="section-title">
-                            Upload Grades
-                        </h2>
 
-                        <p class="section-description">
-                            Add grades manually or upload them using a Word file.
-                        </p>
+        <!-- ========================================
+             MANUAL GRADE ENTRY
+        ======================================== -->
 
+        <div>
+
+            <h3 class="upload-title">Manual Grade Entry</h3>
+
+            <p class="upload-description">
+                Search for a student and select the academic period to enter grades.
+            </p>
+
+
+            <!-- STUDENT SEARCH AND FILTERS -->
+
+      <form method="GET"
+      action="{{ url('/admin') }}"
+      class="grade-search-form">
+
+                <div class="grade-search-grid">
+
+                    <!-- STUDENT NAME OR ID -->
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Student Name or ID Number
+                        </label>
+
+                        <input
+                            type="text"
+                            name="student_lookup"
+                            class="dashboard-input"
+                            value="{{ request('student_lookup') }}"
+                            placeholder="Enter student name or ID number"
+                            required
+                        >
+                    </div>
+
+
+                    <!-- OPTIONAL SCHOOL YEAR -->
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            School Year (Optional)
+                        </label>
+
+                        <input
+                            type="text"
+                            name="school_year"
+                            class="dashboard-input"
+                            value="{{ request('school_year') }}"
+                            placeholder="2026-2027"
+                            pattern="[0-9]{4}-[0-9]{4}"
+                        >
+                    </div>
+
+
+                    <!-- YEAR LEVEL -->
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Year Level
+                        </label>
+
+                        <select name="grade_year" class="dashboard-input" required>
+                            <option value="">Select Year</option>
+
+                            <option value="1st"
+                                {{ request('grade_year') == '1st' ? 'selected' : '' }}>
+                                1st Year
+                            </option>
+
+                            <option value="2nd"
+                                {{ request('grade_year') == '2nd' ? 'selected' : '' }}>
+                                2nd Year
+                            </option>
+
+                            <option value="3rd"
+                                {{ request('grade_year') == '3rd' ? 'selected' : '' }}>
+                                3rd Year
+                            </option>
+
+                            <option value="4th"
+                                {{ request('grade_year') == '4th' ? 'selected' : '' }}>
+                                4th Year
+                            </option>
+                        </select>
+                    </div>
+
+
+                    <!-- SEMESTER -->
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Semester
+                        </label>
+
+                        <select name="grade_semester" class="dashboard-input" required>
+                            <option value="">Select Semester</option>
+
+                            <option value="1st"
+                                {{ request('grade_semester') == '1st' ? 'selected' : '' }}>
+                                1st Semester
+                            </option>
+
+                            <option value="2nd"
+                                {{ request('grade_semester') == '2nd' ? 'selected' : '' }}>
+                                2nd Semester
+                            </option>
+                        </select>
                     </div>
 
                 </div>
 
+                <input type="hidden" name="active_tab" value="grades">
 
-                <!-- MANUAL ENTRY -->
+                <button type="submit" class="primary-button">
+                    Search Student
+                </button>
 
-                <div>
+            </form>
 
-                    <h3 class="upload-title">
-                        Manual Entry
-                    </h3>
 
-                    <p class="upload-description">
-                        Enter the student's grade information below.
-                    </p>
+            <!-- ========================================
+                 SELECTED STUDENT INFORMATION
+            ======================================== -->
 
-<form method="POST" action="/grade-upload">
-    @csrf
+            @if(isset($selectedStudent) && $selectedStudent)
 
-    <div class="form-grid">
+                
 
-        <div class="form-group">
-            <label class="form-label">ID Number</label>
 
-            <input type="text"
-                name="id_number"
-                class="dashboard-input"
-                placeholder="2020-00-000"
-                required>
+                <!-- ========================================
+                     SUBJECT GRADES TABLE
+                ======================================== -->
+
+                <form method="POST" action="{{ url('/grade-upload') }}">
+
+                    @csrf
+
+                    <input type="hidden"
+                           name="student_id"
+                           value="{{ $selectedStudent->id }}">
+
+                    <input type="hidden"
+                           name="id_number"
+                           value="{{ $selectedStudent->id_number }}">
+
+                    <input type="hidden"
+                           name="school_year"
+                           value="{{ $selectedSchoolYear }}">
+
+                    <input type="hidden"
+                           name="year"
+                           value="{{ request('grade_year') }}">
+
+                    <input type="hidden"
+                           name="semester"
+                           value="{{ request('grade_semester') }}">
+
+
+                    <div class="grade-table-wrapper">
+
+                        <table class="grade-entry-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Grade</th>
+                                    <th>Status</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                               @forelse($gradeSubjects as $subject)
+
+                                    @php
+    $existingGrade = $existingGrades->get($subject->id);
+@endphp
+
+                                    <tr>
+
+                                        <!-- SUBJECT -->
+
+                                        <td>
+                                            <strong>{{ $subject->subject }}</strong>
+
+                                            <input
+                                                type="hidden"
+                                                name="grades[{{ $subject->id }}][subject_id]"
+                                                value="{{ $subject->id }}"
+                                            >
+                                        </td>
+
+
+                                        <!-- GRADE -->
+
+                                        <td>
+                                           <input
+    type="number"
+    step="0.01"
+    name="grades[{{ $subject->id }}][grade]"
+    class="dashboard-input"
+    value="{{ old('grades.' . $subject->id . '.grade', $existingGrade->grade ?? '') }}"
+    placeholder="Enter grade">
+                                        </td>
+
+
+                                        <!-- STATUS -->
+
+                                        <td>
+                                           <input
+    type="text"
+    name="grades[{{ $subject->id }}][status]"
+    class="dashboard-input"
+    value="{{ old('grades.' . $subject->id . '.status', $existingGrade->status ?? '') }}"
+    placeholder="PASSED, FAILED, INC">
+                                        </td>
+
+
+                                        <!-- REASON -->
+
+                                        <td>
+                                            <input
+    type="text"
+    name="grades[{{ $subject->id }}][inc_reason]"
+    class="dashboard-input"
+    value="{{ old('grades.' . $subject->id . '.inc_reason', $existingGrade->inc_reason ?? '') }}"
+    placeholder="Enter reason">
+                                        </td>
+
+                                    </tr>
+
+                                @empty
+
+                                    <tr>
+                                        <td colspan="4" class="empty-grade-message">
+                                            No subjects found for the selected year and semester.
+                                        </td>
+                                    </tr>
+
+                                @endforelse
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    @if($gradeSubjects->count() > 0)
+
+                        <input type="hidden" name="active_tab" value="grades">
+
+                        <button type="submit" class="primary-button grade-submit-button">
+                            Save Grades
+                        </button>
+
+                    @endif
+
+                </form>
+
+            @elseif(request()->filled('student_lookup'))
+
+                <div class="alert error-alert">
+                    No matching student was found. Please check the name, ID number, or school year.
+                </div>
+
+            @endif
+
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Subject</label>
 
-            <select name="subject" required>
-                <option value="">Select Subject</option>
+        <!-- ========================================
+             WORD FILE UPLOAD
+        ======================================== -->
 
-                @foreach ($subjects as $subject)
-                    <option value="{{ $subject->id }}">
-                        {{ $subject->subject }}
-                    </option>
-                @endforeach
-            </select>
+        <div class="upload-divider"></div>
+
+        <div>
+
+            <h3 class="upload-title">
+                Upload Using Word File
+            </h3>
+
+            <p class="upload-description">
+                Upload a .docx file containing the subject and student grades.
+            </p>
+
+            <form method="POST"
+                  action="{{ route('grades.upload') }}"
+                  enctype="multipart/form-data"
+                  onsubmit="return confirm('Are you sure you want to upload this grade document?')">
+
+                @csrf
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Select Word File
+                    </label>
+
+                    <input
+                        type="file"
+                        name="grade_file"
+                        class="file-input"
+                        accept=".docx"
+                        required
+                    >
+
+                </div>
+
+                <input type="hidden" name="active_tab" value="grades">
+
+                <button type="submit" class="primary-button">
+                    Upload Grades
+                </button>
+
+            </form>
+
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Grade</label>
 
-            <input type="text"
-                name="grade"
-                class="dashboard-input"
-                placeholder="Enter grade"
-                required>
-        </div>
+        <!-- ========================================
+             MESSAGES
+        ======================================== -->
 
-        
-         <div class="form-group">
-            <label class="form-label">Status</label>
+        @if(session('success'))
+            <div class="alert success-alert">
+                {{ session('success') }}
+            </div>
+        @endif
 
-            <input type="text"
-                name="status"
-                class="dashboard-input"
-                placeholder="INC, PASSED, FAILED">
-        </div>
-
-         <div class="form-group">
-            <label class="form-label">Reason</label>
-
-            <input type="text"
-                name="inc_reason"
-                class="dashboard-input"
-                placeholder="No Final Exam, etc.">
-        </div>
+        @if(session('error'))
+            <div class="alert error-alert">
+                {{ session('error') }}
+            </div>
+        @endif
 
     </div>
 
-    <input type="hidden" name="active_tab" value="grades">
-
-    <button type="submit" class="primary-button">
-        Submit Grade
-    </button>
-</form>
-                </div>
-
-                <!-- WORD FILE UPLOAD -->
-
-<div class="upload-divider"></div>
-
-<div>
-    <h3 class="upload-title">
-        Upload Using Word File
-    </h3>
-
-    <p class="upload-description">
-        Upload a .docx file containing the subject and student grades.
-    </p>
-
-    <form method="POST"
-          action="{{ route('grades.upload') }}"
-          enctype="multipart/form-data">
-
-        @csrf
-
-        <div class="form-group">
-            <label class="form-label">Select Word File</label>
-
-            <input type="file"
-                   name="grade_file"
-                   class="file-input"
-                   accept=".docx"
-                   required>
-        </div>
-
-        <input type="hidden" name="active_tab" value="grades">
-
-        <button type="submit" class="primary-button">
-            Upload Grades
-        </button>
-
-    </form>
 </div>
 
-                <!-- MESSAGES -->
-
-                @if (session('success'))
-                    <div class="alert success-alert">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-
-                @if (session('error'))
-                    <div class="alert error-alert">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
-            </div>
-
-        </div>
 
 
         <!-- ========================================
@@ -460,96 +666,138 @@
                 </div>
 
 
-                <!-- MANUAL ENTRY -->
+<!-- MANUAL ENTRY -->
 
-                <div>
+<div>
 
-                    <h3 class="upload-title">
-                        Manual Entry
-                    </h3>
+    <h3 class="upload-title">
+        Manual Student Entry
+    </h3>
 
-                    <p class="upload-description">
-                        Enter the student's basic information below.
-                    </p>
+    <p class="upload-description">
+        Enter multiple student records using the table below.
+    </p>
 
+    <form method="POST" action="{{ route('new-student.store') }}">
 
-                    <form method="POST" action="/new-student">
+        @csrf
 
-                        @csrf
+        <div class="student-table-wrapper">
 
+            <table class="student-entry-table">
 
-                        <div class="form-grid">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Course</th>
+                        <th>Year</th>
+                        <th>Semester</th>
+                        <th>ID Number</th>
+                        <th>School Year</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
+                <tbody id="manualStudentRows">
 
-                            <div class="form-group">
+                    <tr>
+                        <td>
+                            <input type="text"
+                                   name="students[0][first_name]"
+                                   class="dashboard-input"
+                                   placeholder="First Name"
+                                   required>
+                        </td>
 
-                                <label class="form-label">
-                                    Student Name
-                                </label>
+                        <td>
+                            <input type="text"
+                                   name="students[0][last_name]"
+                                   class="dashboard-input"
+                                   placeholder="Last Name"
+                                   required>
+                        </td>
 
-                                <input type="text" name="name" class="dashboard-input"
-                                    placeholder="Enter student name" required>
+                        <td>
+                            <input type="text"
+                                   name="students[0][course]"
+                                   class="dashboard-input"
+                                   placeholder="BSCS"
+                                   required>
+                        </td>
 
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label class="form-label">
-                                    ID Number
-                                </label>
-
-                                <input type="text" name="id_number" class="dashboard-input"
-                                    placeholder="2020-00-000" required>
-
-                            </div>
-
-                            <div class="form-group">
-
-                                <label class="form-label">
-                                    Course
-                                </label>
-
-                                <input type="text" name="course" class="dashboard-input" placeholder="BSCS"
+                        <td>
+                            <select name="students[0][year]"
+                                    class="dashboard-input"
                                     required>
+                                <option value="">Select</option>
+                                <option value="1st">1st</option>
+                                <option value="2nd">2nd</option>
+                                <option value="3rd">3rd</option>
+                                <option value="4th">4th</option>
+                            </select>
+                        </td>
 
-                            </div>
-
-                            <div class="form-group">
-
-                                <label class="form-label">
-                                    Year Level
-                                </label>
-
-                                <input type="text" name="year" class="dashboard-input" placeholder="1st"
+                        <td>
+                            <select name="students[0][semester]"
+                                    class="dashboard-input"
                                     required>
+                                <option value="">Select</option>
+                                <option value="1st">1st</option>
+                                <option value="2nd">2nd</option>
+                            </select>
+                        </td>
 
-                            </div>
+                        <td>
+                            <input type="text"
+                                   name="students[0][id_number]"
+                                   class="dashboard-input"
+                                   placeholder="2026-02-222"
+                                   pattern="[0-9]{4}-[0-9]{2}-[0-9]{3}"
+                                   required>
+                        </td>
 
-                            <div class="form-group">
+                        <td>
+                            <input type="text"
+                                   name="students[0][school_year]"
+                                   class="dashboard-input"
+                                   value="2026-2027"
+                                   pattern="[0-9]{4}-[0-9]{4}"
+                                   required>
+                        </td>
 
-                                <label class="form-label">
-                                    Semester
-                                </label>
+                        <td>
+                            <button type="button"
+                                    class="remove-row-button"
+                                    onclick="removeManualStudentRow(this)">
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
 
-                                <input type="text" name="semester" class="dashboard-input" placeholder="1st"
-                                    required>
+                </tbody>
 
-                            </div>
+            </table>
 
+        </div>
 
+        <div class="manual-entry-actions">
 
-                        </div>
+            <button type="button"
+                    class="secondary-button"
+                    onclick="addManualStudentRow()">
+                + Add Row
+            </button>
 
-                        <input type="hidden" name="active_tab" value="students">
+            <button type="submit" class="primary-button">
+                Add Students
+            </button>
 
-                        <button type="submit" class="primary-button">
-                            Add Student
-                        </button>
+        </div>
 
-                    </form>
+    </form>
 
-                </div>
+</div>
 
 
                 <!-- FILE UPLOAD -->
@@ -606,6 +854,114 @@
 
     </div>
 
+
+
+
+<script>
+
+    let manualStudentRowIndex = 1;
+
+    // ADD NEW STUDENT ROW
+    function addManualStudentRow() {
+
+        const tbody = document.getElementById('manualStudentRows');
+
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>
+                <input type="text"
+                       name="students[${manualStudentRowIndex}][first_name]"
+                       class="dashboard-input"
+                       placeholder="First Name"
+                       required>
+            </td>
+
+            <td>
+                <input type="text"
+                       name="students[${manualStudentRowIndex}][last_name]"
+                       class="dashboard-input"
+                       placeholder="Last Name"
+                       required>
+            </td>
+
+            <td>
+                <input type="text"
+                       name="students[${manualStudentRowIndex}][course]"
+                       class="dashboard-input"
+                       placeholder="BSCS"
+                       required>
+            </td>
+
+            <td>
+                <select name="students[${manualStudentRowIndex}][year]"
+                        class="dashboard-input"
+                        required>
+                    <option value="">Select</option>
+                    <option value="1st">1st</option>
+                    <option value="2nd">2nd</option>
+                    <option value="3rd">3rd</option>
+                    <option value="4th">4th</option>
+                </select>
+            </td>
+
+            <td>
+                <select name="students[${manualStudentRowIndex}][semester]"
+                        class="dashboard-input"
+                        required>
+                    <option value="">Select</option>
+                    <option value="1st">1st</option>
+                    <option value="2nd">2nd</option>
+                </select>
+            </td>
+
+            <td>
+                <input type="text"
+                       name="students[${manualStudentRowIndex}][id_number]"
+                       class="dashboard-input"
+                       placeholder="2026-02-222"
+                       pattern="[0-9]{4}-[0-9]{2}-[0-9]{3}"
+                       required>
+            </td>
+
+            <td>
+                <input type="text"
+                       name="students[${manualStudentRowIndex}][school_year]"
+                       class="dashboard-input"
+                       value="2026-2027"
+                       pattern="[0-9]{4}-[0-9]{4}"
+                       required>
+            </td>
+
+            <td>
+                <button type="button"
+                        class="remove-row-button"
+                        onclick="removeManualStudentRow(this)">
+                    Remove
+                </button>
+            </td>
+        `;
+
+        tbody.appendChild(row);
+
+        manualStudentRowIndex++;
+    }
+
+
+    // REMOVE STUDENT ROW
+    function removeManualStudentRow(button) {
+
+        const tbody = document.getElementById('manualStudentRows');
+
+        if (tbody.rows.length <= 1) {
+            alert('At least one student row is required.');
+            return;
+        }
+
+        button.closest('tr').remove();
+    }
+
+</script>
 
     <!-- ========================================
          TAB SCRIPT
@@ -711,5 +1067,8 @@ async function markRequestsSeen() {
     }
 
 }
+
+
+
     </script>
 </x-layout>
